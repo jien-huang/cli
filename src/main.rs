@@ -7,6 +7,11 @@ use getopts::Options;
 
 mod command_line;
 
+fn do_works(inp: &str, out: Vec<String>) {
+    println!("{}", inp);
+    println!("{:?}", out);
+}
+
 fn do_work(inp: &str, out: Option<String>) {
     println!("{}", inp);
     match out {
@@ -110,8 +115,14 @@ fn main() {
     if matches.opt_present("p") {
         do_work(&subcommand, matches.opt_str("p"));
     };
+    if matches.opt_count("e") > 0 {
+        do_works(&subcommand, matches.opt_strs("e"));
+    }
+    if matches.opt_count("f") > 0 {
+        do_works(&subcommand, matches.opt_strs("f"));
+    }
     if subcommand.eq(&"list".to_string()) {
         command_line::get_all_dockers();
     }
-    // -e -f are multiple values, leave it now
+
 }
