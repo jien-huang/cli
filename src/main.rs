@@ -20,40 +20,6 @@ fn print_usage(program: &str, opts: Options) {
     print!("{}", opts.usage(&brief));
 }
 
-// Print a web page onto stdout
-fn main() {
-//    let mut easy = Easy::new();
-//    get_url(&mut easy, "https://www.rust-lang.org/");
-//
-//    println!("{}", easy.response_code().unwrap());
-    let args: Vec<String> = env::args().collect();
-    let program = args[0].clone();
-    if args.len() <=1 {
-        help();
-        exit(1);
-    }
-    let subcommand = args[1].clone();
-
-    let mut opts = Options::new();
-    opts.optopt("o", "", "set output file name", "NAME");
-    opts.optflag("h", "help", "print this help menu");
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
-    };
-    if matches.opt_present("h") {
-        print_usage(&program, opts);
-        return;
-    }
-    let output = matches.opt_str("o");
-    let input = if !matches.free.is_empty() {
-        matches.free[0].clone()
-    } else {
-        print_usage(&program, opts);
-        return;
-    };
-    do_work(&input, output);
-}
 
 fn help() {
     println!("USAGE:
@@ -98,12 +64,78 @@ fn help() {
         -p  --port          Port number
         -e  --environment   Environment varialbe, key=value
         -f  --filename      File Name
-
-     Enjoy!
         ");
 }
 
+fn main() {
+
+    let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
+    if args.len() <=1 {
+        help();
+        println!("Please call with correct parameters");
+        exit(1);
+    }
+    let subcommand = args[1].clone();
+
+    let mut opts = Options::new();
+    opts.optflag("v", "verbose", "Use verbose output");
+    opts.optopt("i", "instance", "Instance id", "hex format string");
+    opts.optopt("s", "script", "Script name", "test script name");
+    opts.optopt("r", "result", "Result id", "result id");
+    opts.optopt("p", "port", "Port number", "An integer port number, default is 8090");
+    opts.optmulti("e", "environment", "Environment variable for/of instance", "key=value");
+    opts.optmulti("f", "filename", "File Name", "File Name for upload");
+    let matches = match opts.parse(&args[2..]) {
+        Ok(m) => { m }
+        Err(f) => { panic!(f.to_string()) }
+    };
+    if subcommand.eq("help") {
+        help();
+        println!("Enjoy!");
+        return;
+    }
+    let instance_id = match matches.opt_str("i") {
+        Some(s) => s,
+        None => {
+            help();
+            println!("-i should follow with an instance id");
+            exit(1);
+        },
+    };
+    let script_name = match matches.opt_str("s") {
+        Some(s) => s,
+        None => {
+            help();
+            println!("-s should follow with a script name");
+            exit(1);
+        },
+    };
+    let result_id = match matches.opt_str("r") {
+        Some(s) => s,
+        None => {
+            help();
+            println!("-r should follow with a result id");
+            exit(1);
+        },
+    };
+    let port = match matches.opt_str("p") {
+        Some(s) => s,
+        None => {
+            help();
+            println!("-p should follow with a port number, if do not specify, default value is 8090");
+            exit(1);
+        },
+    };
+    // -e -f are multiple values, leave it now
+    
+}
+
 fn get_url(easy: &mut Easy, url: &str) {
+    //    let mut easy = Easy::new();
+//    get_url(&mut easy, "https://www.rust-lang.org/");
+//
+//    println!("{}", easy.response_code().unwrap());
     easy.url(url).unwrap();
     easy.write_function(|data| {
 //        stdout().write_all(data).unwrap();
