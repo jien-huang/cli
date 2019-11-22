@@ -1,10 +1,12 @@
 extern crate getopts;
-use getopts::Options;
-use std::io::{stdout, Write};
+
 use std::env;
+use std::io::{stdout, Write};
 use std::process::Command;
-use curl::easy::Easy;
 use std::process::exit;
+
+use curl::easy::Easy;
+use getopts::Options;
 
 fn do_work(inp: &str, out: Option<String>) {
     println!("{}", inp);
@@ -68,10 +70,9 @@ fn help() {
 }
 
 fn main() {
-
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
-    if args.len() <=1 {
+    if args.len() <= 1 {
         help();
         println!("Please call with correct parameters");
         exit(1);
@@ -88,47 +89,29 @@ fn main() {
     opts.optmulti("f", "filename", "File Name", "File Name for upload");
     let matches = match opts.parse(&args[2..]) {
         Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Err(f) => {
+            println!("Please check your options. if need help, please type: 'cli help' .");
+            exit(1);
+        }
     };
-    if subcommand.eq("help") {
+    if subcommand.eq(&"help".to_string()) {
         help();
         println!("Enjoy!");
         return;
     }
-    let instance_id = match matches.opt_str("i") {
-        Some(s) => s,
-        None => {
-            help();
-            println!("-i should follow with an instance id");
-            exit(1);
-        },
+    if matches.opt_present("i") {
+        do_work(&subcommand, matches.opt_str("i"));
     };
-    let script_name = match matches.opt_str("s") {
-        Some(s) => s,
-        None => {
-            help();
-            println!("-s should follow with a script name");
-            exit(1);
-        },
+    if matches.opt_present("s") {
+        do_work(&subcommand, matches.opt_str("s"));
     };
-    let result_id = match matches.opt_str("r") {
-        Some(s) => s,
-        None => {
-            help();
-            println!("-r should follow with a result id");
-            exit(1);
-        },
+    if matches.opt_present("r") {
+        do_work(&subcommand, matches.opt_str("r"));
     };
-    let port = match matches.opt_str("p") {
-        Some(s) => s,
-        None => {
-            help();
-            println!("-p should follow with a port number, if do not specify, default value is 8090");
-            exit(1);
-        },
+    if matches.opt_present("p") {
+        do_work(&subcommand, matches.opt_str("p"));
     };
     // -e -f are multiple values, leave it now
-    
 }
 
 fn get_url(easy: &mut Easy, url: &str) {
@@ -155,5 +138,4 @@ mod tests {
         get_url(&mut easy, "https://www.google.com/");
         assert!(easy.response_code().unwrap() > 0);
     }
-
 }
