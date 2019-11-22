@@ -18,13 +18,6 @@ fn do_work(inp: &str, out: Option<String>) {
     }
 }
 
-fn print_usage(program: &str, opts: Options) {
-    let brief = format!("Usage: \n \
-        \t{} [SUBCOMMAND] [OPTIONS]", program);
-    print!("{}", opts.usage(&brief));
-}
-
-
 fn help() {
     println!("USAGE:
     cli SUBCOMMAND [OPTIONS]
@@ -43,6 +36,7 @@ fn help() {
         git                 Pull scripts from git
         start           Start test
                             -i [instance id] (mandatory)
+                            -s Script name or id
         stop            Stop test
                             -i [instance id] (mandatory)
         halt            Stop docker instance
