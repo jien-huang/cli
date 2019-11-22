@@ -4,11 +4,9 @@ use std::env;
 use std::io::{stdout, Write};
 use std::process::Command;
 use std::process::exit;
-use curl::easy::Easy;
 use getopts::Options;
 
-mod docker;
-mod request;
+mod command_line;
 
 fn do_work(inp: &str, out: Option<String>) {
     println!("{}", inp);
@@ -67,7 +65,7 @@ fn help() {
 }
 
 fn main() {
-    docker::init_check();
+    command_line::init_check();
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     if args.len() <= 1 {
@@ -114,7 +112,7 @@ fn main() {
         do_work(&subcommand, matches.opt_str("p"));
     };
     if subcommand.eq(&"list".to_string()) {
-        docker::get_all_dockers();
+        command_line::get_all_dockers();
     }
     // -e -f are multiple values, leave it now
 }
