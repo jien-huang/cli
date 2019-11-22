@@ -67,6 +67,7 @@ fn help() {
 }
 
 fn main() {
+    docker::init_check();
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
     if args.len() <= 1 {
