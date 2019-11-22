@@ -4,9 +4,11 @@ use std::env;
 use std::io::{stdout, Write};
 use std::process::Command;
 use std::process::exit;
-
 use curl::easy::Easy;
 use getopts::Options;
+
+mod docker;
+mod request;
 
 fn do_work(inp: &str, out: Option<String>) {
     println!("{}", inp);
@@ -66,6 +68,7 @@ fn help() {
         -p  --port          Port number
         -e  --environment   Environment varialbe, key=value
         -f  --filename      File Name
+        -h  --host          Host name, if not provided, default is localhost
         ");
 }
 
@@ -82,6 +85,7 @@ fn main() {
     let mut opts = Options::new();
     opts.optflag("v", "verbose", "Use verbose output");
     opts.optopt("i", "instance", "Instance id", "hex format string");
+    opts.optopt("h", "host", "host machine name", "Host name, if not provided, default is localhost");
     opts.optopt("s", "script", "Script name", "test script name");
     opts.optopt("r", "result", "Result id", "result id");
     opts.optopt("p", "port", "Port number", "An integer port number, default is 8090");
@@ -89,7 +93,7 @@ fn main() {
     opts.optmulti("f", "filename", "File Name", "File Name for upload");
     let matches = match opts.parse(&args[2..]) {
         Ok(m) => { m }
-        Err(f) => {
+        Err(_f) => {
             println!("Please check your options. if need help, please type: 'cli help' .");
             exit(1);
         }
@@ -102,6 +106,9 @@ fn main() {
     if matches.opt_present("i") {
         do_work(&subcommand, matches.opt_str("i"));
     };
+    if matches.opt_present("h") {
+        do_work(&subcommand, matches.opt_str("h"));
+    };
     if matches.opt_present("s") {
         do_work(&subcommand, matches.opt_str("s"));
     };
@@ -111,31 +118,8 @@ fn main() {
     if matches.opt_present("p") {
         do_work(&subcommand, matches.opt_str("p"));
     };
-    // -e -f are multiple values, leave it now
-}
-
-fn get_url(easy: &mut Easy, url: &str) {
-    //    let mut easy = Easy::new();
-//    get_url(&mut easy, "https://www.rust-lang.org/");
-//
-//    println!("{}", easy.response_code().unwrap());
-    easy.url(url).unwrap();
-    easy.write_function(|data| {
-//        stdout().write_all(data).unwrap();
-        Ok(data.len())
-    }).unwrap();
-    easy.perform().unwrap();
-}
-
-#[cfg(test)]
-mod tests {
-    // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::*;
-
-    #[test]
-    fn test_get_url() {
-        let mut easy = Easy::new();
-        get_url(&mut easy, "https://www.google.com/");
-        assert!(easy.response_code().unwrap() > 0);
+    if subcommand.eq(&"list".to_string()) {
+        docker::get_all_dockers();
     }
+    // -e -f are multiple values, leave it now
 }
