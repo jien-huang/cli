@@ -1,9 +1,8 @@
 extern crate getopts;
 
 use std::env;
-use std::io::{stdout, Write};
-use std::process::Command;
 use std::process::exit;
+
 use getopts::Options;
 
 mod command_line;
@@ -20,7 +19,7 @@ fn help() {
     println!("USAGE:
     cli SUBCOMMAND [OPTIONS]
 
-    SUBCOMMANDS:
+    SUB COMMANDS:
         help            Print help information (No option need)
         deploy          Deploy a docker instance
                             -p [port number: integer] (optional, default 8090)
@@ -58,7 +57,7 @@ fn help() {
         -s  --script        Script name or id
         -r  --result        Result name or id
         -p  --port          Port number
-        -e  --environment   Environment varialbe, key=value
+        -e  --environment   Environment variable, key=value
         -f  --filename      File Name
         -h  --host          Host name, if not provided, default is localhost
         ");
@@ -67,7 +66,7 @@ fn help() {
 fn main() {
     command_line::init_check();
     let args: Vec<String> = env::args().collect();
-    let program = args[0].clone();
+    let _program = args[0].clone();
     if args.len() <= 1 {
         help();
         println!("Please call with correct parameters");
