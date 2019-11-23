@@ -4,21 +4,9 @@ use std::env;
 use std::process::exit;
 
 use getopts::Options;
+use std::ptr::null;
 
 mod command_line;
-
-fn do_works(inp: &str, out: Vec<String>) {
-    println!("{}", inp);
-    println!("{:?}", out);
-}
-
-fn do_work(inp: &str, out: Option<String>) {
-    println!("{}", inp);
-    match out {
-        Some(x) => println!("{}", x),
-        None => println!("No Output"),
-    }
-}
 
 fn help() {
     println!("USAGE:
@@ -68,6 +56,36 @@ fn help() {
         ");
 }
 
+fn do_works(inp: &str, out: Vec<String>) {
+    println!("{}", inp);
+    println!("{:?}", out);
+}
+
+fn do_work(inp: &str, out: Option<String>) {
+    println!("{}", inp);
+    match out {
+        Some(x) => println!("{}", x),
+        None => println!("No Output"),
+    }
+}
+
+fn get_opt(out: Option<String>, _default: String) -> String {
+    match out {
+        Some(x) => return x,
+        None => return _default
+    }
+}
+
+fn get_opt_not_empty(out: Option<String>, variable_name: String) -> String {
+    match out {
+        Some(x) => return x,
+        None => {
+            println!("{} need to be given a value", variable_name);
+            exit(1);
+        }
+    }
+}
+
 fn main() {
     command_line::init_check();
     let args: Vec<String> = env::args().collect();
@@ -79,6 +97,13 @@ fn main() {
     }
     let subcommand = args[1].clone();
 
+    if subcommand.eq(&"help".to_string()) {
+        help();
+        println!("Enjoy!");
+        return;
+    }
+
+    // handle options
     let mut opts = Options::new();
     opts.optflag("v", "verbose", "Use verbose output");
     opts.optopt("i", "instance", "Instance id", "hex format string");
@@ -95,31 +120,40 @@ fn main() {
             exit(1);
         }
     };
-    if subcommand.eq(&"help".to_string()) {
-        help();
-        println!("Enjoy!");
-        return;
-    }
+
+    let instance = "";
     if matches.opt_present("i") {
-        do_work(&subcommand, matches.opt_str("i"));
+        let instance = get_opt_not_empty(matches.opt_str("i"), "instance".to_string());
     };
+    let host = "localhost".to_string();
     if matches.opt_present("h") {
-        do_work(&subcommand, matches.opt_str("h"));
+        let host = get_opt(matches.opt_str("h"), "localhost".to_string());
     };
+    let script_name = "";
     if matches.opt_present("s") {
-        do_work(&subcommand, matches.opt_str("s"));
+        let script_name = get_opt_not_empty(matches.opt_str("s"), "script name".to_string());
     };
+    let result_id = "";
     if matches.opt_present("r") {
-        do_work(&subcommand, matches.opt_str("r"));
+        let result_id = get_opt_not_empty(matches.opt_str("r"), "result id".to_string());
     };
+    let port = "8090".to_string();
     if matches.opt_present("p") {
-        do_work(&subcommand, matches.opt_str("p"));
+        let port = get_opt(matches.opt_str("p"), "8090".to_string());
     };
+    let environments : Vec<String>;
     if matches.opt_count("e") > 0 {
-        do_works(&subcommand, matches.opt_strs("e"));
+        let environments = matches.opt_strs("e");
     }
+    let files : Vec<String>;
     if matches.opt_count("f") > 0 {
-        do_works(&subcommand, matches.opt_strs("f"));
+        let files = matches.opt_strs("f");
+    }
+    // end of handle options
+
+    if subcommand.eq(&"deploy".to_string()) {
+        let cmd = format!("docker run --name instance -d -it -p {}:8090 huangjien/instance:latest", port);
+        command_line::run_command_with_return(&cmd);
     }
     if subcommand.eq(&"list".to_string()) {
         command_line::get_all_dockers();

@@ -42,6 +42,7 @@ pub fn run_command_with_return(cmd: &str) {
 }
 
 pub fn run_command_return_output(cmd: &str) -> io::Result<Output> {
+//    println!("{}", cmd);
     if cfg!(windows) {
         return Command::new("cmd").args(&["/C", cmd]).output();
     } else {
