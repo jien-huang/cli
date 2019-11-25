@@ -150,7 +150,36 @@ fn main() {
         let files = matches.opt_strs("f");
     }
     // end of handle options
-
+    if subcommand.eq(&"version".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"status".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"clear".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"halt".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"stop".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"start".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"download".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"upload".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"git".to_string()) {
+        ;
+    }
+    if subcommand.eq(&"set".to_string()) {
+        ;
+    }
     if subcommand.eq(&"deploy".to_string()) {
         command_line::run_command_with_return(&format!("docker pull huangjien/jien:latest"));
         let cmd = format!("docker run -d -it -p {}:8090 huangjien/instance:latest", port);
