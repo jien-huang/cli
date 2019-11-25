@@ -152,7 +152,8 @@ fn main() {
     // end of handle options
 
     if subcommand.eq(&"deploy".to_string()) {
-        let cmd = format!("docker run --name instance -d -it -p {}:8090 huangjien/instance:latest", port);
+        command_line::run_command_with_return(&format!("docker pull huangjien/jien:latest"));
+        let cmd = format!("docker run -d -it -p {}:8090 huangjien/instance:latest", port);
         command_line::run_command_with_return(&cmd);
     }
     if subcommand.eq(&"list".to_string()) {
