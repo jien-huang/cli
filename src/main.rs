@@ -151,7 +151,7 @@ fn main() {
     }
     // end of handle options
     if subcommand.eq(&"version".to_string()) {
-        ;
+        print!("v0.1.2");
     }
     if subcommand.eq(&"status".to_string()) {
         ;
