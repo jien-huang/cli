@@ -178,7 +178,7 @@ fn main() {
         ;
     }
     if subcommand.eq(&"set".to_string()) {
-        ;
+        command_line::set_environment_variables();
     }
     if subcommand.eq(&"deploy".to_string()) {
         command_line::run_command_with_return(&format!("docker pull huangjien/jien:latest"));

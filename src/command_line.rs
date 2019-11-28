@@ -6,6 +6,10 @@ pub fn get_all_dockers() {
     println!("get all dockers here")
 }
 
+pub fn set_environment_variables() {
+    println!("set env vars");
+}
+
 // check if docker and curl existed, if not, then exit
 pub fn init_check() {
     let output = run_command_return_output("curl --help");
