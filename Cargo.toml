@@ -7,5 +7,5 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-pretty_assertions = "0.4.0"
+pretty_assertions = "0.6.1"
 getopts = "0.2"
